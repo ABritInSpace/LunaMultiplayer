@@ -14,7 +14,7 @@ namespace JPCC
     {
         // About and Version number
         private static readonly string version = "v2.0.0";
-        public static readonly string about = "J.P. Custom Commands " + version + " by Jane Pixel. GitHub Repository: https://github.com/JanePixel/LunaMultiplayer";
+        public static readonly string about = "J.P. Custom Commands " + version + " by Jane Pixel, forked by ABritInSpace Forked Repository: https://github.com/ABritInSpace/LunaMultiplayer Original Repository: https://github.com/JanePixel/LunaMultiplayer";
 
         // Bool to signal loading completion
         private static bool loadingDone = false;

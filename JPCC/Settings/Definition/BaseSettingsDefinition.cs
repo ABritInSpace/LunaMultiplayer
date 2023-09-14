@@ -15,7 +15,7 @@ namespace JPCC.Settings.Definition
         public string WebsiteAnnounceText { get; set; } = "We have a Discord! Type /discord to join.";
 
         [XmlComment(Value = "The text that will be displayed when the website command is used.")]
-        public string WebsiteUrl { get; set; } = "Link to public Discord server: https://discord.gg/SKqYxWHFth";
+        public string WebsiteUrl { get; set; } = "Server admin hasn't filled out this field ;)";
 
         [XmlComment(Value = "The custom command used for displaying the website URL. Make sure to update the EnabledCommands with the new command.")]
         public string WebsiteCommand { get; set; } = "/discord";
