@@ -36,6 +36,7 @@ namespace JPCC.Settings.Definition
         [XmlComment(Value = "The commands that are enabled.")]
         public string EnabledCommands { get; set; } =
             "/help,\n" +
+            "/listbackups,\n" +
             "/about,\n" +
             "/rules,\n" +
             "/discord,\n" +
@@ -43,6 +44,8 @@ namespace JPCC.Settings.Definition
             "/say,\n" +
             "/countdown,\n" +
             "/vote_resetworld,\n" +
+            "/vote_restorebackup,\n" +
+            "/vote_makebackup,\n" +
             "/vote_kickplayer,\n" +
             "/vote_banplayer,\n" +
             "/yes,\n" +

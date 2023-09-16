@@ -7,6 +7,7 @@ using Server.Plugin;
 using JPCC.Settings;
 using JPCC.Settings.Structures;
 using JPCC.Logging;
+using System.Reflection;
 
 namespace JPCC
 {
@@ -41,6 +42,13 @@ namespace JPCC
                 // Load settings
                 SettingsHandler.LoadSettings();
 
+                // Create Backups folder if non-existant
+                if (!Directory.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..\\..\\Backups\\"))
+                {
+                    JPCCLog.Normal("Creating backups folder...");
+                    Directory.CreateDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..\\..\\Backups\\");
+                }
+
                 // Initialize objects
                 messageDispatcher = new MessageDispatcherHandler();
                 chatCommands = new ChatCommandsHandler(baseKeeper, messageDispatcher);
@@ -70,6 +78,11 @@ namespace JPCC
             {
                 ResetWorldFilesHandler resetWorldFilesHandler = new ResetWorldFilesHandler();
                 resetWorldFilesHandler.ResetWorld();
+            }
+            if (baseKeeper.RestoreWorld)
+            {
+                BackupSavesHandler backupSavesHandler = new BackupSavesHandler();
+                backupSavesHandler.RestoreBackup(baseKeeper.Backup);
             }
 
             JPCCLog.Normal("J.P.C.C. is signing off!");

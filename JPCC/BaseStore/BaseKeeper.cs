@@ -10,5 +10,7 @@
         public string About = "";
 
         public bool ResetWorld = false;
+        public bool RestoreWorld = false;
+        public string Backup = "";
     }
 }

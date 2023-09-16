@@ -62,6 +62,7 @@ namespace JPCC.Models
         private readonly string[] CommandsList =
         {
             "/help",
+            "/listbackups",
             "/about",
             "/rules",
             $"{BaseSettings.SettingsStore.WebsiteCommand}",
@@ -69,6 +70,8 @@ namespace JPCC.Models
             "/say",
             "/countdown",
             "/vote_resetworld",
+            "/vote_restorebackup",
+            "/vote_makebackup",
             "/vote_kickplayer",
             "/vote_banplayer",
             "/yes",
@@ -78,6 +81,7 @@ namespace JPCC.Models
         private readonly string[] CommandsDescriptionList =
         {
             "/help <page number> - lists all commands",
+            "/listbackups <page number> - lists all saved backups",
             "/about - about J.P. Custom Commands",
             "/rules - displays the server rules",
             $"{BaseSettings.SettingsStore.WebsiteCommand} - returns the URL",
@@ -85,6 +89,8 @@ namespace JPCC.Models
             "/say <message text> - say something as the server, people will still see you sent the message",
             "/countdown <5-30> - starts a countdown using the specified amount of seconds, useful for starting races",
             "/vote_resetworld - starts a vote on resetting the world",
+            "/vote_restorebackup - starts a vote on restoring a saved backup",
+            "/vote_makebackup - starts a vote on making a saved backup",
             "/vote_kickplayer <playername> - starts a vote on kicking a player",
             "/vote_banplayer <playername> - starts a vote on banning a player",
             "/yes - for voting yes",

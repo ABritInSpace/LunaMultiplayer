@@ -4,6 +4,7 @@ using JPCC.Handler;
 using JPCC.Models;
 using JPCC.Logging;
 using JPCC.BaseStore;
+using System.Reflection;
 
 namespace JPCC.Commands.SubHandler
 {
@@ -41,6 +42,25 @@ namespace JPCC.Commands.SubHandler
                 {
                     _messageDispatcherHandler.DispatchMessageToAllClients($"Player {client.PlayerName} has initiated a vote on resetting the world!{Environment.NewLine}Please use the commands /yes or /no to cast your vote!");
                     JPCCLog.Normal($"{client.PlayerName} has started a vote on resetting the world!");
+
+                    VoteTimerAsync(command, client);
+                }
+                if (_votingTracker.VoteType == "restorebackup" && Directory.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..\\..\\Backups\\" + command[1]))
+                {
+                    _messageDispatcherHandler.DispatchMessageToAllClients($"Player {client.PlayerName} has initiated a vote on restoring from backup {command[1]}!{Environment.NewLine}Please use the commands /yes or /no to cast your vote!");
+                    JPCCLog.Normal($"{client.PlayerName} has started a vote on restoring the world!");
+
+                    VoteTimerAsync(command, client);
+                }
+                else if (_votingTracker.VoteType == "restorebackup")
+                {
+                    _messageDispatcherHandler.DispatchMessageToSingleClient("Failed to restore backup, does not exist!",client);
+                    JPCCLog.Normal($"Vote failed, backup does not exist.");
+                }
+                if (_votingTracker.VoteType == "makebackup")
+                {
+                    _messageDispatcherHandler.DispatchMessageToAllClients($"Player {client.PlayerName} has initiated a vote on making a world backup!{Environment.NewLine}Please use the commands /yes or /no to cast your vote!");
+                    JPCCLog.Normal($"{client.PlayerName} has started a vote on making a backup of the world!");
 
                     VoteTimerAsync(command, client);
                 }
@@ -136,6 +156,14 @@ namespace JPCC.Commands.SubHandler
             {
                 await HandleBanVoteResults(command, client);
             }
+            if (_votingTracker.VoteType == "restorebackup")
+            {
+                await HandleRestoreVoteResults(command, client);
+            }
+            if (_votingTracker.VoteType == "makebackup")
+            {
+                await HandleMakeVoteResults(command, client);
+            }
 
             // Reset the base state for the next vote
             _votingTracker.VoteType = "";
@@ -175,6 +203,64 @@ namespace JPCC.Commands.SubHandler
             {
                 _messageDispatcherHandler.DispatchMessageToAllClients($"Vote has failed! Not enough players voted yes. World will not be reset.");
                 JPCCLog.Normal($"Vote has failed! Not enough players voted yes. World will not be reset.");
+            }
+        }
+        private async Task HandleRestoreVoteResults(string[] command, ClientStructure client) 
+        {
+            await Task.Delay(0001);
+            
+            // Do we have enough votes?
+            if (_votingTracker.VotedYesCount > _votingTracker.VotedNoCount)
+            {
+                _messageDispatcherHandler.DispatchMessageToAllClients($"Vote has succeeded! Enough players voted yes. Backup will be restored.");
+                JPCCLog.Normal($"Vote has succeeded! Enough players voted yes. Backup will be restored.");
+                await Task.Delay(4000);
+
+                _messageDispatcherHandler.DispatchMessageToAllClients($"Server will reboot in 5 seconds...");
+                JPCCLog.Normal($"Server will reboot in 5 seconds...");
+
+                await Task.Delay(5000);
+
+                _baseKeeper.RestoreWorld = true;
+                _baseKeeper.Backup = command[1];
+                CommandHandler.Commands["restartserver"].Func(null);
+            }
+            else
+            {
+                _messageDispatcherHandler.DispatchMessageToAllClients($"Vote has failed! Not enough players voted yes. Backup will not be restored.");
+                JPCCLog.Normal($"Vote has failed! Not enough players voted yes. Backup will not be restored.");
+            }
+        }
+        private async Task HandleMakeVoteResults(string[] command, ClientStructure client) 
+        {
+            await Task.Delay(0001);
+            
+            // Do we have enough votes?
+            if (_votingTracker.VotedYesCount > _votingTracker.VotedNoCount)
+            {
+                _messageDispatcherHandler.DispatchMessageToAllClients($"Vote has succeeded! Enough players voted yes. World will be backed up.");
+                JPCCLog.Normal($"Vote has succeeded! Enough players voted yes. World will be backed up.");
+                await Task.Delay(4000);
+
+                BackupSavesHandler backupSavesHandler = new BackupSavesHandler();
+                string result = null;
+                try{result = backupSavesHandler.MakeBackup();}
+                catch{JPCCLog.Debug("Exception");};
+                if (result != null)
+                {
+                    _messageDispatcherHandler.DispatchMessageToAllClients($"Backup made successfully! {result}");
+                    JPCCLog.Normal($"Backup made successfully! {result}");
+                }
+                else
+                {
+                    _messageDispatcherHandler.DispatchMessageToAllClients("Backup failed!");
+                    JPCCLog.Error("Backup failed!");
+                }
+            }
+            else
+            {
+                _messageDispatcherHandler.DispatchMessageToAllClients($"Vote has failed! Not enough players voted yes. World will not be backed up.");
+                JPCCLog.Normal($"Vote has failed! Not enough players voted yes. World will not be backed up.");
             }
         }
 

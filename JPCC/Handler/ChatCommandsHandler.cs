@@ -24,6 +24,7 @@ namespace JPCC.Handler
 
         private static InvalidChatCommand _invalidChatCommand;
         private static HelpChatCommand _helpChatCommand;
+        private static BackupListChatCommand _backupListChatCommand;
         private static AboutChatCommand _aboutChatCommand;
         private static RulesChatCommand _rulesChatCommand;
         private static WebsiteChatCommand _websiteChatCommand;
@@ -32,6 +33,8 @@ namespace JPCC.Handler
         private static YesChatCommand _yesChatCommand;
         private static NoChatCommand _noChatCommand;
         private static VoteResetWorldChatCommand _voteResetWorldChatCommand;
+        private static VoteRestoreBackup _voteRestoreBackup;
+        private static VoteMakeBackup _voteMakeBackup;
         private static VoteKickPlayerChatCommand _voteKickPlayerChatCommand;
         private static VoteBanPlayerChatCommand _voteBanPlayerChatCommand;
         private static CountdownChatCommand _countdownChatCommand;
@@ -50,6 +53,7 @@ namespace JPCC.Handler
 
             _invalidChatCommand = new InvalidChatCommand(_messageDispatcherHandler);
             _helpChatCommand = new HelpChatCommand(_messageDispatcherHandler, _chatCommands);
+            _backupListChatCommand = new BackupListChatCommand(_messageDispatcherHandler, _chatCommands);
             _aboutChatCommand = new AboutChatCommand(_messageDispatcherHandler, _chatCommands);
             _rulesChatCommand = new RulesChatCommand(_messageDispatcherHandler);
             _websiteChatCommand = new WebsiteChatCommand(_messageDispatcherHandler, _chatCommands);
@@ -58,6 +62,8 @@ namespace JPCC.Handler
             _yesChatCommand = new YesChatCommand(_messageDispatcherHandler, _votingTracker);
             _noChatCommand = new NoChatCommand(_messageDispatcherHandler, _votingTracker);
             _voteResetWorldChatCommand = new VoteResetWorldChatCommand(_messageDispatcherHandler, _votingTracker, _runVoteSubHandler);
+            _voteRestoreBackup = new VoteRestoreBackup(_messageDispatcherHandler, _votingTracker, _runVoteSubHandler);
+            _voteMakeBackup = new VoteMakeBackup(_messageDispatcherHandler, _votingTracker, _runVoteSubHandler);
             _voteKickPlayerChatCommand = new VoteKickPlayerChatCommand(_messageDispatcherHandler, _votingTracker, _runVoteSubHandler);
             _voteBanPlayerChatCommand = new VoteBanPlayerChatCommand(_messageDispatcherHandler, _votingTracker, _runVoteSubHandler);
             _countdownChatCommand = new CountdownChatCommand(_messageDispatcherHandler, _countdownTracker, _runCountdownSubHandler);
@@ -101,6 +107,12 @@ namespace JPCC.Handler
                 // Help command handler
                 _helpChatCommand.HelpCommandHandler(parsedCommand, client);
             }
+            if (commandBase == "/listbackups" && activeCommands.ContainsKey("/help")) 
+            {
+                foundCommand = true;
+                // Help command handler
+                _backupListChatCommand.ListCommandHandler(parsedCommand, client);
+            }
             if (commandBase == "/about" && activeCommands.ContainsKey("/about"))
             {
                 foundCommand = true;
@@ -142,6 +154,18 @@ namespace JPCC.Handler
                 foundCommand = true;
                 // Reset world command handler
                 _voteResetWorldChatCommand.VoteResetWorldCommandHandler(parsedCommand, client);
+            }
+            if (commandBase == "/vote_restorebackup" && activeCommands.ContainsKey("/vote_restorebackup"))
+            {
+                foundCommand = true;
+                // Reset world command handler
+                _voteRestoreBackup.VoteRestoreBackupHandler(parsedCommand, client);
+            }
+            if (commandBase == "/vote_makebackup" && activeCommands.ContainsKey("/vote_restorebackup"))
+            {
+                foundCommand = true;
+                // Reset world command handler
+                _voteMakeBackup.VoteMakeBackupHandler(parsedCommand, client);
             }
             if (commandBase == "/vote_kickplayer" && activeCommands.ContainsKey("/vote_kickplayer"))
             {
