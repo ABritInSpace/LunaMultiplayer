@@ -9,8 +9,8 @@ namespace JPCC.Handler
 {
     public class BackupSavesHandler
     {
-        private string saveFilePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..\\..\\Universe\\";
-        private string backupFilePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..\\..\\Backups\\";
+        private string saveFilePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..//..//Universe//";
+        private string backupFilePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..//..//Backups//";
 
         public BackupSavesHandler() {}
         public string[] GetBackupList()
@@ -24,7 +24,7 @@ namespace JPCC.Handler
                 Directory.CreateDirectory(backupFilePath);
             }
             string rn = DateTime.Now.ToString("yyyy-MM-dd@H");
-            string toCreate = backupFilePath+@"\"+rn;
+            string toCreate = backupFilePath+@"/"+rn;
             if (!Directory.Exists(toCreate))
             {
                 Directory.CreateDirectory(toCreate);

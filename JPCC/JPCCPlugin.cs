@@ -27,7 +27,7 @@ namespace JPCC
         private static MotdHandler motdHandler;
         private static BroadcastHandler broadcastHandler;
 
-        public virtual void OnServerStart()
+        public virtual async void OnServerStart()
         {
             //Try and load all classes and settings, in case of an error print output to console
             try
@@ -43,10 +43,18 @@ namespace JPCC
                 SettingsHandler.LoadSettings();
 
                 // Create Backups folder if non-existant
-                if (!Directory.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..\\..\\Backups\\"))
+                if (!Directory.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..//..//Backups//"))
                 {
                     JPCCLog.Normal("Creating backups folder...");
-                    Directory.CreateDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..\\..\\Backups\\");
+                    Directory.CreateDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..//..//Backups//");
+                }
+
+                // Start auto backup task (if enabled)
+                double AutoBackupInterval = BackupAndRestoreSettings.SettingsStore.AutoBackupInterval;
+                if (AutoBackupInterval > 0)
+                {
+                    JPCCLog.Normal("Initializing auto backups...");
+                    backupTimer(TimeSpan.FromHours(AutoBackupInterval));
                 }
 
                 // Initialize objects
@@ -68,6 +76,19 @@ namespace JPCC
             catch (Exception ex) 
             {
                 JPCCLog.Fatal($"Error! Could not load J.P.C.C.! Exception: {ex}");
+            }
+        }
+        
+        private async Task backupTimer(TimeSpan ts)
+        {
+            await Task.Yield();
+            JPCCLog.Normal($"Backup Timer Start with interval {BackupAndRestoreSettings.SettingsStore.AutoBackupInterval}");
+            BackupSavesHandler bsh = new BackupSavesHandler();
+            var timer = new PeriodicTimer(ts);
+            while (await timer.WaitForNextTickAsync())
+            {   
+                JPCCLog.Debug("Auto backup in progress");
+                bsh.MakeBackup();
             }
         }
 

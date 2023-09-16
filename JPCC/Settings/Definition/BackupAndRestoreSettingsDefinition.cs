@@ -13,5 +13,7 @@ namespace JPCC.Settings.Definition
             "Scenarios,\n" +
             "Kerbals,\n" +
             "Groups";
+        [XmlComment(Value = "The interval in hours between each backup - 0 to disable.")]
+        public double AutoBackupInterval { get; set; } = 0;
     }
 }

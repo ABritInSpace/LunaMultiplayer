@@ -45,7 +45,7 @@ namespace JPCC.Commands.SubHandler
 
                     VoteTimerAsync(command, client);
                 }
-                if (_votingTracker.VoteType == "restorebackup" && Directory.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..\\..\\Backups\\" + command[1]))
+                if (_votingTracker.VoteType == "restorebackup" && Directory.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..//..//Backups//" + command[1]))
                 {
                     _messageDispatcherHandler.DispatchMessageToAllClients($"Player {client.PlayerName} has initiated a vote on restoring from backup {command[1]}!{Environment.NewLine}Please use the commands /yes or /no to cast your vote!");
                     JPCCLog.Normal($"{client.PlayerName} has started a vote on restoring the world!");

@@ -1,6 +1,7 @@
 ﻿using LmpCommon.Xml;
 using JPCC.Logging;
 using Server.System;
+using System.Reflection;
 
 namespace JPCC.Settings.Base
 {
@@ -9,7 +10,7 @@ namespace JPCC.Settings.Base
     {
         protected abstract string Filename { get; }
 
-        private string ConfigDirectory = Path.Combine("Plugins", "JPCC");
+        private string ConfigDirectory = Assembly.GetExecutingAssembly().Location + "//..//JPCC";
 
         protected string SettingsPath => Path.Combine(ConfigDirectory, Filename);
         public static T SettingsStore { get; private set; } = new T();
@@ -17,7 +18,11 @@ namespace JPCC.Settings.Base
         protected SettingsBase()
         {
             if (!FileHandler.FolderExists(ConfigDirectory))
-                FileHandler.FolderCreate(ConfigDirectory);
+            {
+                JPCCLog.Normal("Creating config folder...");
+                try{FileHandler.FolderCreate(ConfigDirectory);}
+                catch (Exception e){JPCCLog.Error(e.Message);}
+            }
         }
 
         public virtual void Load()
