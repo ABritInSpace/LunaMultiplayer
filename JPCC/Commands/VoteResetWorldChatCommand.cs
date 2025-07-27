@@ -1,8 +1,10 @@
-﻿using Server.Client;
+﻿using System.Reflection;
+using Server.Client;
 using JPCC.Commands.SubHandler;
 using JPCC.Handler;
 using JPCC.Models;
 using JPCC.Logging;
+using Server.Command;
 
 namespace JPCC.Commands
 {
@@ -31,7 +33,34 @@ namespace JPCC.Commands
             }
 
             // Use vote subhandler to run vote
-            _runVoteSubHandler.StartVoteHandler(command, client);
+            _runVoteSubHandler.StartVoteHandler(command, client, SuccessAction, Validate);
+        }
+        
+        private bool Validate(string[] command, ClientStructure client)
+        {
+            _messageDispatcherHandler.DispatchMessageToAllClients(
+                $"Player {client.PlayerName} has initiated a vote on " +
+                $"resetting the world!{Environment.NewLine}Please use the commands " +
+                $"/yes or /no to cast your vote!"
+            );
+            JPCCLog.Normal($"{client.PlayerName} has started a vote on resetting the world!");
+            return true;
+        }
+
+        private async void SuccessAction(string[] command, ClientStructure client)
+        {
+            _messageDispatcherHandler.DispatchMessageToAllClients($"Vote has succeeded! Enough players voted yes. World will be reset.");
+            JPCCLog.Normal($"Vote has succeeded! Enough players voted yes. World will be reset.");
+            await Task.Delay(4000);
+
+            _messageDispatcherHandler.DispatchMessageToAllClients($"Server will reboot in 5 seconds...");
+            JPCCLog.Normal($"Server will reboot in 5 seconds...");
+
+            await Task.Delay(5000);
+
+            // Set reset state to true, then reboot
+            RunVoteSubHandler.baseKeeper.ResetWorld = true;
+            CommandHandler.Commands["restartserver"].Func(null);
         }
     }
 }

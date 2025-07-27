@@ -11,7 +11,7 @@ namespace JPCC.Commands
         private static MessageDispatcherHandler _messageDispatcherHandler;
         private static ChatCommands _chatCommands;
 
-        private static int itemsPerPage = 4;
+        private static int itemsPerPage = 5;
         private static int totalPages = 0;
 
         public HelpChatCommand(MessageDispatcherHandler messageDispatcherHandler, ChatCommands chatCommands) 

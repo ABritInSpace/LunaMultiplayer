@@ -19,7 +19,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Net.Mime;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -135,9 +137,22 @@ namespace Server
                 if (IsRestart)
                 {
                     //Start new server
-                    var serverExePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Server.exe";
-                    var newProcLmpServer = new ProcessStartInfo { FileName = serverExePath };
-                    Process.Start(newProcLmpServer);
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    {
+                        // Linux compatibility
+                        var serverExePath = " " + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Server.dll";
+                        var newProcLmpServer = new ProcessStartInfo { FileName = "dotnet", Arguments = serverExePath, UseShellExecute = false, RedirectStandardInput = true };
+                        Process.Start(newProcLmpServer);
+                        LunaLog.Normal("Killing initial process...");
+                        Environment.Exit(0);
+                    }
+                    else
+                    {
+                        // Regular compatibility
+                        var serverExePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Server.exe";
+                        var newProcLmpServer = new ProcessStartInfo { FileName = serverExePath };
+                        Process.Start(newProcLmpServer);
+                    }
                 }
             }
             catch (Exception e)

@@ -25,13 +25,13 @@ namespace JPCC.Handler
 
             MessageQueuer.SendToClient<ChatSrvMsg>(client, messageData);
         }
-        public void DispatchMessageExcludeClient(string message, ClientStructure client) 
+        public void DispatchMessageExcludeClient(string message, ClientStructure? client) 
         {
             var messageData = ServerContext.ServerMessageFactory.CreateNewMessageData<ChatMsgData>();
             messageData.From = serverName;
             messageData.Relay = true;
             messageData.Text = message;
-            if (client != null){
+            if (client is not null){
                 foreach (string vcstr in ClientRetriever.GetActivePlayerNames().Split(',')){
                     if (vcstr.Trim() != client.PlayerName){
                         ClientStructure validClient = ClientRetriever.GetClientByName(vcstr.Trim());

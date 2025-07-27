@@ -33,7 +33,40 @@ namespace JPCC.Commands
             }
             
             // Use vote subhandler to run vote
-            _runVoteSubHandler.StartVoteHandler(command, client);
+            _runVoteSubHandler.StartVoteHandler(command, client, SuccessAction, Validate);
+        }
+        
+        private bool Validate(string[] command, ClientStructure client)
+        {
+            _messageDispatcherHandler.DispatchMessageToAllClients(
+                $"Player {client.PlayerName} has initiated a vote on " +
+                $"making a backup!{Environment.NewLine}Please use the commands " +
+                $"/yes or /no to cast your vote!"
+            );
+            JPCCLog.Normal($"{client.PlayerName} has started a vote on making a backup!");
+            return true;
+        }
+
+        private async void SuccessAction(string[] command, ClientStructure client)
+        {
+            _messageDispatcherHandler.DispatchMessageToAllClients($"Vote has succeeded! Enough players voted yes. World will be backed up.");
+            JPCCLog.Normal($"Vote has succeeded! Enough players voted yes. World will be backed up.");
+            await Task.Delay(4000);
+
+            BackupSavesHandler backupSavesHandler = new BackupSavesHandler();
+            string result = null;
+            try{result = backupSavesHandler.MakeBackup();}
+            catch{JPCCLog.Debug("Exception");};
+            if (result != null)
+            {
+                _messageDispatcherHandler.DispatchMessageToAllClients($"Backup made successfully! {result}");
+                JPCCLog.Normal($"Backup made successfully! {result}");
+            }
+            else
+            {
+                _messageDispatcherHandler.DispatchMessageToAllClients("Backup failed!");
+                JPCCLog.Error("Backup failed!");
+            }
         }
     }
 }
