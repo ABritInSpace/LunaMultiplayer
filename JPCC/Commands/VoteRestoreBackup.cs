@@ -47,7 +47,7 @@ namespace JPCC.Commands
                     // Use vote subhandler to run vote
                     _runVoteSubHandler.StartVoteHandler(command, client, SuccessAction, Validate);
                 }
-                else if (Directory.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "..\\..\\Backups\\" + command[1]))
+                else if (Directory.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "../../Backups/" + command[1]))
                 {
                     _votingTracker.VoteType = "restorebackup";
                     // Use vote subhandler to run vote

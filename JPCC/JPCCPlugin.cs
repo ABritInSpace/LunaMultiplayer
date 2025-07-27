@@ -56,6 +56,15 @@ namespace JPCC
                     JPCCLog.Normal("Initializing auto backups...");
                     backupTimer(TimeSpan.FromHours(AutoBackupInterval));
                 }
+                
+                // Clean backups directory (if enabled)
+                BackupSavesHandler bsh = new BackupSavesHandler();
+                bsh.ClearBackups();
+                bool ClearBackups = BackupAndRestoreSettings.SettingsStore.ClearBackups;
+                if (ClearBackups && DateTime.UtcNow.DayOfWeek == DayOfWeek.Monday)
+                {
+                    bsh.ClearBackups();
+                }
 
                 // Initialize objects
                 messageDispatcher = new MessageDispatcherHandler();

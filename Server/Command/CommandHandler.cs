@@ -68,6 +68,12 @@ namespace Server.Command
 
                     //We only accept a command once every 500ms
                     await Task.Delay(500);
+                    
+                    if (MainServer.IsRestart)
+                    {
+                        ServerContext.ServerRunning = false;
+                        break;
+                    }
                 }
             }
             catch (Exception e)

@@ -40,7 +40,7 @@ namespace Server
 
         public static readonly CancellationTokenSource CancellationTokenSrc = new CancellationTokenSource();
 
-        private static bool IsRestart = false;
+        public static bool IsRestart = false;
 
         public static void Main()
         {
@@ -141,10 +141,16 @@ namespace Server
                     {
                         // Linux compatibility
                         var serverExePath = " " + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/Server.dll";
-                        var newProcLmpServer = new ProcessStartInfo { FileName = "dotnet", Arguments = serverExePath, UseShellExecute = false, RedirectStandardInput = true };
-                        Process.Start(newProcLmpServer);
-                        LunaLog.Normal("Killing initial process...");
-                        Environment.Exit(0);
+                        var newProcLmpServer = new ProcessStartInfo { 
+                            FileName = "dotnet", 
+                            Arguments = serverExePath, 
+                            UseShellExecute = false, 
+                            RedirectStandardInput = false,
+                        };
+                        WebServer.StopWebServer();
+                        var procInstance = Process.Start(newProcLmpServer);
+                        QuitEvent.Set();
+                        procInstance.WaitForExit();
                     }
                     else
                     {
@@ -160,6 +166,7 @@ namespace Server
                 LunaLog.Fatal(e is HandledException ? e.Message : $"Error in main server thread, Exception: {e}");
                 Console.ReadLine(); //Avoid closing automatically
             }
+            Environment.Exit(0);
         }
 
         private static void LoadSettingsAndGroups()
@@ -195,6 +202,10 @@ namespace Server
         /// </summary>
         private static void Exit()
         {
+            if (IsRestart)
+            {
+                return;
+            }
             LunaLog.Normal("Exiting... Please wait until all threads are finished");
             ExitEvent.Exit();
 
@@ -214,6 +225,7 @@ namespace Server
             //Perform Backups
             BackupSystem.PerformBackups(CancellationTokenSrc.Token);
             LunaLog.Normal("Restarting...  Please wait until all threads are finished");
+            ExitEvent.Exit();
 
             ServerContext.Shutdown("Server is restarting");
             CancellationTokenSrc.Cancel();

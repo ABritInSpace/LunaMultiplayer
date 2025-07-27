@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
+using log4net.Appender;
 using uhttpsharp.Listeners;
 using uhttpsharp.RequestProviders;
 
@@ -88,6 +89,10 @@ namespace uhttpsharp
         public void Dispose()
         {
             _isActive = false;
+            foreach (var listener in _listeners)
+            {
+                listener.Dispose();
+            }
         }
     }
 }
