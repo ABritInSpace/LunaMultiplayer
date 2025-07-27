@@ -59,7 +59,6 @@ namespace JPCC
                 
                 // Clean backups directory (if enabled)
                 BackupSavesHandler bsh = new BackupSavesHandler();
-                bsh.ClearBackups();
                 bool ClearBackups = BackupAndRestoreSettings.SettingsStore.ClearBackups;
                 if (ClearBackups && DateTime.UtcNow.DayOfWeek == DayOfWeek.Monday)
                 {
