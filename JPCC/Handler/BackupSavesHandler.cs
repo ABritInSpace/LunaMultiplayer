@@ -15,7 +15,10 @@ namespace JPCC.Handler
         public BackupSavesHandler() {}
         public string[] GetBackupList()
         {
-            return Directory.GetDirectories(backupFilePath).Select(d => new DirectoryInfo(d).Name).Reverse().ToArray();
+            return Directory.GetDirectories(backupFilePath)
+                .OrderByDescending(d => new DirectoryInfo(d).CreationTime)
+                .Select(d => new DirectoryInfo(d).Name)
+                .ToArray();
         }
 
         public string MakeBackup()
