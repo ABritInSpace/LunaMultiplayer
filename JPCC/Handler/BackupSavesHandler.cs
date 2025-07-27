@@ -45,7 +45,7 @@ namespace JPCC.Handler
         {
             JPCCLog.Normal("Clearing backups...");
             DirectoryInfo di = new DirectoryInfo(backupFilePath);
-            DirectoryInfo[] files = di.GetDirectories().OrderByDescending(f => f.LastWriteTime).ToArray();
+            DirectoryInfo[] files = di.GetDirectories().OrderByDescending(f => f.CreationTime).ToArray();
             if (files.Length < BackupAndRestoreSettings.SettingsStore.KeepBackups)
             {
                 JPCCLog.Error("Not enough backups to keep! Aborting clear.");
