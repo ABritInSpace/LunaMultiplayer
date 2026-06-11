@@ -161,7 +161,7 @@ namespace JPCC.Handler
                 // Reset world command handler
                 _voteRestoreBackup.VoteRestoreBackupHandler(parsedCommand, client);
             }
-            if (commandBase == "/vote_makebackup" && activeCommands.ContainsKey("/vote_restorebackup"))
+            if (commandBase == "/vote_makebackup" && activeCommands.ContainsKey("/vote_makebackup"))
             {
                 foundCommand = true;
                 // Reset world command handler
